@@ -1,36 +1,28 @@
 # bots/disenador.py
-# ------------------------------------------------------------
-# Bot Diseñador: genera o sugiere imágenes usando DALL·E
-# ------------------------------------------------------------
-from openai import OpenAI
-from dotenv import load_dotenv
-import os
+# --------------------------------------------------------------
+# BOT DISEÑADOR
+# Genera una imagen descriptiva o un prompt para el producto
+# usando el proveedor de IA configurado (Mistral, OpenRouter, etc.)
+# --------------------------------------------------------------
 
-# Cargar variable de entorno con la API key
-base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-load_dotenv(os.path.join(base_path, ".env"))
+from bots.common_ai import generar_imagen
 
-client = OpenAI()
-
-def generar_imagen(prompt, nombre="imagen_generada"):
+def crear_diseño(producto, descripcion_extra=""):
     """
-    Genera una imagen a partir de un texto descriptivo (prompt).
-    Retorna la URL de la imagen creada por el modelo gpt-image-1 (DALL·E).
+    Genera una imagen o propuesta visual para el producto.
     """
-    try:
-        respuesta = client.images.generate(
-            model="gpt-image-1",
-            prompt=prompt,
-            size="512x512"
-        )
-        url = respuesta.data[0].url
-        print(f"🎨 Imagen generada para '{prompt}': {url}")
-        return url
-    except Exception as e:
-        print("⚠️ Error generando imagen:", e)
-        return "Error al generar imagen"
+    prompt = (
+        f"Diseño publicitario atractivo para {producto}. "
+        f"{descripcion_extra}. "
+        "Estilo moderno, profesional y ecológico si aplica."
+    )
 
-# Prueba directa (solo si ejecutas este archivo manualmente)
+    url_o_prompt = generar_imagen(prompt)
+    print("🎨 Diseño generado → ", url_o_prompt)
+    return url_o_prompt
+
+
+# --- Prueba directa (solo si se ejecuta este archivo solo) ---
 if __name__ == "__main__":
-    prueba = generar_imagen("Anuncio con una taza de café ecológico, fondo verde claro")
-    print(prueba)
+    resultado = crear_diseño("Café ecológico", "Tonos verdes y marrones, fondo limpio")
+    print(resultado)
